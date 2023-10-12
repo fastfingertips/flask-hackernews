@@ -1,0 +1,53 @@
+{% extends 'layout.html' %}
+
+{% block container %}
+  {% if articles %}
+<!-- TABLE -->
+  <table class="table table-hover table-striped p-4">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th>Article ID</th>
+        <th>By</th>
+        <th>Score</th>
+        <th>Time</th>
+        <th>Title</th>
+        <th>Url</th>
+        <th>Added Date</th>
+        <th>Visited</th>
+        <th>Visit Date</th>
+        <th>Favorite</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for article in articles %}
+      <tr>
+        <th scope="row">{{ article.id }}</th>
+        <td>{{ article.article_id }}</td>
+        <td>{{ article.by }}</td>
+        <td>{{ article.score }}</td>
+        <td>{{ article.time }}</td>
+        <td>{{ article.title }}</td>
+        <td>
+          <a href="{{ article.url }}" class="text-decoration-none" target="_blank">
+            {{ article.url }}
+          </a>
+        </td>
+        <td>{{ article.added_date }}</td>
+        <td>{{ article.visited }}</td>
+        <td>{{ article.visit_date }}</td>
+        <td>
+          <a href="/favorite?id={{ article.article_id }}" class="text-decoration-none">
+            {{ article.favorite }}
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <div class="alert alert-warning" role="alert">
+      Any article not found!
+    </div>
+  {% endif %}
+{% endblock %}
