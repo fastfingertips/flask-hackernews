@@ -1,0 +1,25 @@
+<nav class="navbar navbar-expand">
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">
+          Home
+        </a>
+      <li class="nav-item">
+        <a href="/visited" class="nav-link{% if request.path == '/visited' %} active{% endif %}">
+          Visited Links{% if counts.visited %}<span class="sr-only"> ({{ counts.visited }})</span>{% endif %}
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/notvisited" class="nav-link{% if request.path == '/notvisited' %} active{% endif %}">
+          Unvisited Links{% if counts.notvisited %}<span class="sr-only"> ({{ counts.notvisited }})</span>{% endif %}
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/favorites" class="nav-link{% if request.path == '/favorites' %} active{% endif %}{% if not counts.favorites %} disabled{% endif %}">
+          Favorite Links{% if counts.favorites %}<span class="sr-only"> ({{ counts.favorites }})</span>{% endif %}
+        </a>
+      </li>
+    </ul> 
+  </div>
+</nav>
