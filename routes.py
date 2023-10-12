@@ -6,8 +6,10 @@ from flask import (
 )
 
 from functions import (
+    getTopStories,
+    getNewStories,
+    getBestStories,
     get_db_counts,
-    getArticles,
     getArticle,
     articleParser,
     getCurrentTime
@@ -20,7 +22,11 @@ from models import Url
 @app.route('/', methods=['GET', 'POST'])
 def index():
     article_limit = 30
-    articleIds = getArticles()
+    score_limit = 0
+    articleIds = getTopStories() + getBestStories() # + getNewStories()
+    print(len(articleIds), 'article ids found')
+    articleIds = list(set(articleIds))
+    print(len(articleIds), 'unique article ids found')
     articles = []
 
     visited_count = Url.query.filter_by(visited=True).count()
@@ -46,8 +52,7 @@ def index():
                 DELETE FROM url WHERE url = ''
                 SELECT * FROM url WHERE url = ''
                 """
-                
-                print(current_article_id, 'no url, skipping')
+                print(rank, current_article_id, 'no url, skipping')
                 continue
 
             new_article = Url(
@@ -62,21 +67,26 @@ def index():
             db.session.add(new_article)
             db.session.commit()
 
-            print(current_article_id, 'added to database')
+            print(rank, current_article_id, 'added to database')
             
             # get article from database
             article = Url.query.filter_by(
                 article_id=current_article_id
                 ).first()
         else:
-            print(current_article_id, 'already in database')
+            print(rank, current_article_id, 'already in database')
+            if article.visited:
+                print(rank, current_article_id, 'already visited')
+                continue
 
-        if not article.visited:
-            # if article is not visited, add to articles
-            articles.append(article)
-        else:
-            print(current_article_id, 'already visited')
-        
+        """
+        if article.score < score_limit:
+            print(rank, current_article_id, 'score too low, skipping')
+            continue
+        """
+
+        articles.append(article)
+                
         if len(articles) >= article_limit:
             # if article limit reached, stop adding articles
             break
@@ -95,6 +105,7 @@ def index():
 @app.route('/visited', methods=["GET"])
 def visited():
     articles = Url.query.filter_by(visited=True).all()
+    articles = articles[::-1] # reverse order
     print(len(articles), 'visited articles found in database')
     context = {
         'counts': get_db_counts(),
@@ -118,13 +129,14 @@ def notvisited():
 @app.route('/favorites', methods=["GET"])
 def favorites():
     articles = Url.query.filter_by(favorite=True).all()
+    articles = articles[::-1] # reverse order
     print(len(articles), 'favorite articles found in database')
     context = {
         'counts': get_db_counts(),
         'articles': articles,
         'theme': 'dark',
     }
-    return render_template('index.html', **context)
+    return render_template('favorites.html', **context)
 
 # -- INIT ROUTES --
 

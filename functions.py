@@ -12,8 +12,18 @@ def getReq(url, timeout=5):
             print("No internet connection available.", end='\r')
             time.sleep(1)
 
-def getArticles():
+def getTopStories():
     url = 'https://hacker-news.firebaseio.com/v0/topstories.json'
+    r = getReq(url)
+    return r.json()
+
+def getNewStories():
+    url = 'https://hacker-news.firebaseio.com/v0/newstories.json'
+    r = getReq(url)
+    return r.json()
+
+def getBestStories():
+    url = 'https://hacker-news.firebaseio.com/v0/beststories.json'
     r = getReq(url)
     return r.json()
 
