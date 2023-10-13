@@ -118,6 +118,7 @@ def visited():
 @app.route('/notvisited', methods=["GET"])
 def notvisited():
     articles = Url.query.filter_by(visited=False).all()
+    articles = sorted(articles, key=lambda x: x.score, reverse=True)
     print(len(articles), 'not visited articles found in database')
     context = {
         'counts': get_db_counts(),
