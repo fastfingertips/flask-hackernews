@@ -15,8 +15,6 @@
         <th>Title</th>
         <th>Url</th>
         <th>Added Date</th>
-        <th>Visited</th>
-        <th>Visit Date</th>
         <th>Favorite</th>
       </tr>
     </thead>
@@ -35,8 +33,6 @@
           </a>
         </td>
         <td>{{ article.added_date }}</td>
-        <td>{{ article.visited }}</td>
-        <td>{{ article.visit_date }}</td>
         <td>
           <a href="/favorite?id={{ article.article_id }}" class="text-decoration-none">
             {{ article.favorite }}
