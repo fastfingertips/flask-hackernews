@@ -69,6 +69,7 @@ def get_db_counts():
         'visited': Url.query.filter_by(visited=True).count(),
         'notvisited': Url.query.filter_by(visited=False).count(),
         'favorites': Url.query.filter_by(favorite=True).count(),
+        'total': Url.query.count(),
     }
     return counts
 
