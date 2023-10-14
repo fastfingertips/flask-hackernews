@@ -32,8 +32,8 @@
             {{ article.url }}
           </a>
         </td>
-        <td>{{ article.added_date }}</td>
-        <td>
+        <td>{{ article.added_date.strftime('%Y/%m/%d, %H:%M:%S') }}</td>
+        <td class="text-center">
           <a href="/favorite?id={{ article.article_id }}" class="text-decoration-none">
             {% if article.favorite %}
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="orange" class="bi bi-star-fill" viewBox="0 0 16 16">
