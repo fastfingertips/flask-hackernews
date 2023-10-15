@@ -21,8 +21,6 @@ from application import app
 from database import db
 from models import Url
 
-
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     articles = get_stories(30)
@@ -33,7 +31,7 @@ def index():
         'articles': articles_sorted,
         'theme': 'dark',
     }
-    
+
     return render_template('index.html', **context)
 
 @app.route('/visited', methods=["GET"])
@@ -61,6 +59,29 @@ def notvisited():
         'theme': 'dark',
     }
     return render_template('index.html', **context)
+
+@app.route('/stats', methods=["GET"])
+def stats():
+    all_articles = Url.query.filter_by(visited=True).all()
+
+    today_visited_scores = []
+
+    for article in all_articles:
+        if article.visit_date is not None:
+            if article.visit_date.date() == getCurrentTime().date():
+                today_visited_scores.append(article.score)
+
+    today_total_visited = len(today_visited_scores)
+    today_total_points = sum(today_visited_scores)
+
+    context = {
+        'counts': get_db_counts(),
+        'today_total_visited': today_total_visited,
+        'today_total_points': today_total_points,
+        'theme': 'dark',
+    }
+
+    return render_template('stats.html', **context)
 
 @app.route('/favorites', methods=["GET"])
 def favorites():

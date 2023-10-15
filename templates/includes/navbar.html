@@ -20,6 +20,11 @@
           Favorite Links{% if counts.favorites %}<span class="sr-only"> ({{ counts.favorites }})</span>{% endif %}
         </a>
       </li>
+      <li class="nav-item">
+        <a href="/stats" class="nav-link{% if request.path == '/stats' %} active{% endif %}">
+          Stats
+        </a>
+      </li>
     </ul> 
   </div>
 </nav>

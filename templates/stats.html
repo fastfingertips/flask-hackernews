@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block container %}
+  <div class="jumbotron">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Total visited</th>
+            <th>Total points</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr>
+              <td class="text-left">
+                Today
+              </td>
+              <td>{{ today_total_visited }}</td>
+              <td>{{ today_total_points }}</td>
+            </tr>
+        </tbody>
+      </table>
+  </div>
+{% endblock %}
