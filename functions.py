@@ -1,10 +1,16 @@
 from database import db
 import requests, time
-from datetime import datetime
+from datetime import datetime, timedelta
 from tqdm import tqdm
 
 def getCurrentTime():
     return datetime.now()
+
+def compareDates(date_1, date_2, days=0, focus=True):
+    if focus:
+        return date_1 == date_2 - timedelta(days=days)
+    return date_1 >= date_2 - timedelta(days=days)
+    
 
 def getReq(url, timeout=5):
     while True:
