@@ -4,4 +4,4 @@
 ## run
 > python main.py
 
-![image](https://github.com/FastFingertips/flask-hackernews/assets/46646991/d5f6ac93-2f02-40ec-bb9c-61e254cc0932)
+![image](https://github.com/FastFingertips/flask-hackernews/assets/46646991/c8cd1ba9-48c1-487d-a82e-7292904bbb46)
