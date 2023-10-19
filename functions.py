@@ -3,43 +3,42 @@ import requests, time
 from datetime import datetime, timedelta
 from tqdm import tqdm
 
-def getCurrentTime():
+def get_current_time():
     return datetime.now()
 
-def compareDates(date_1, date_2, days=0, focus=True):
+def compare_dates(date_1, date_2, days=0, focus=True):
     if focus:
         return date_1 == date_2 - timedelta(days=days)
     return date_1 >= date_2 - timedelta(days=days)
-    
 
-def getReq(url, timeout=5):
+def get_req(url, timeout=5):
     while True:
         try: return requests.get(url, timeout=timeout)
         except requests.ConnectionError: # check internet connection
             print("No internet connection available.", end='\r')
             time.sleep(1)
 
-def getTopStories():
+def get_top_stories():
     url = 'https://hacker-news.firebaseio.com/v0/topstories.json'
-    r = getReq(url)
+    r = get_req(url)
     return r.json()
 
-def getNewStories():
+def get_new_stories():
     url = 'https://hacker-news.firebaseio.com/v0/newstories.json'
-    r = getReq(url)
+    r = get_req(url)
     return r.json()
 
-def getBestStories():
+def get_best_stories():
     url = 'https://hacker-news.firebaseio.com/v0/beststories.json'
-    r = getReq(url)
+    r = get_req(url)
     return r.json()
 
-def getArticle(article_id):
+def get_article(article_id):
     url = 'https://hacker-news.firebaseio.com/v0/item/' + str(article_id) + '.json'
-    r = getReq(url)
+    r = get_req(url)
     return r.json()
 
-def articleParser(article_json):
+def article_parser(article_json):
     data = {
         'id': None,
         'by': None,
@@ -89,7 +88,7 @@ def get_story_from_db(article_id):
 
 def get_stories(article_limit=None, score_limit=None):
     from models import Url
-    articleIds = getTopStories() + getBestStories() + getNewStories()
+    articleIds = get_top_stories() + get_best_stories() + get_new_stories()
     print(len(articleIds), 'article ids found')
     articleIds = list(set(articleIds))
     print(len(articleIds), 'unique article ids found')
@@ -107,8 +106,8 @@ def get_stories(article_limit=None, score_limit=None):
         if article is None:
 
             # get article from api
-            articleJson = getArticle(current_article_id)
-            articleDict = articleParser(articleJson)
+            articleJson = get_article(current_article_id)
+            articleDict = article_parser(articleJson)
 
             # if url is not valid, skip article
             if articleDict['url'] == '':

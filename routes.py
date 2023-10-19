@@ -6,14 +6,14 @@ from flask import (
 )
 
 from functions import (
-    getTopStories,
-    getNewStories,
-    getBestStories,
+    get_top_stories,
+    get_new_stories,
+    get_best_stories,
     get_db_counts,
-    getArticle,
-    articleParser,
-    getCurrentTime,
-    compareDates,
+    get_article,
+    article_parser,
+    get_current_time,
+    compare_dates,
     get_story_from_db,
     get_stories
 )
@@ -74,20 +74,21 @@ def stats():
     for article in all_articles:
         if article.visit_date is not None:
             article_date = article.visit_date.date()
-            current_time = getCurrentTime().date()
-            if compareDates(article_date, current_time):
+            current_time = get_current_time().date()
+            if compare_dates(article_date, current_time):
                 today_visited_scores.append(article.score)
-            if compareDates(article_date, current_time, 1):
+            if compare_dates(article_date, current_time, 1):
                 yesterday_visited_scores.append(article.score)
-            if compareDates(article_date, current_time, 7, False):
+            if compare_dates(article_date, current_time, 7, False):
                 week_visited_scores.append(article.score)
-            if compareDates(article_date, current_time, 30, False):
+            if compare_dates(article_date, current_time, 30, False):
                 month_visited_scores.append(article.score)
-            if compareDates(article_date, current_time, 365, False):
+            if compare_dates(article_date, current_time, 365, False):
                 year_visited_scores.append(article.score)
 
     context = {
         'counts': get_db_counts(),
+        'theme': 'dark',
 
         'today_total_visited': len(today_visited_scores),
         'today_total_points': sum(today_visited_scores),
@@ -99,16 +100,9 @@ def stats():
         'month_total_points': sum(month_visited_scores),
         'year_total_visited': len(year_visited_scores),
         'year_total_points': sum(year_visited_scores),
-
-        'theme': 'dark',
     }
 
     return render_template('stats.html', **context)
-
-
-
-
-
 
 @app.route('/favorites', methods=["GET"])
 def favorites():
@@ -134,7 +128,7 @@ def visit():
         if article is not None:
             if not article.visited:
                 article.visited = True
-                article.visit_date = getCurrentTime()
+                article.visit_date = get_current_time()
                 db.session.commit()
                 print(article.article_id, 'marked as visited')
                 return redirect(article.url)
