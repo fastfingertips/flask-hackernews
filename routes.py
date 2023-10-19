@@ -15,7 +15,8 @@ from functions import (
     get_current_time,
     compare_dates,
     get_story_from_db,
-    get_stories
+    get_stories,
+    get_stats
 )
 
 from application import app
@@ -64,44 +65,14 @@ def notvisited():
 @app.route('/stats', methods=["GET"])
 def stats():
     all_articles = Url.query.filter_by(visited=True).all()
-
-    today_visited_scores = []
-    yesterday_visited_scores = []
-    week_visited_scores = []
-    month_visited_scores = []
-    year_visited_scores = []
-
-    for article in all_articles:
-        if article.visit_date is not None:
-            article_date = article.visit_date.date()
-            current_time = get_current_time().date()
-            if compare_dates(article_date, current_time):
-                today_visited_scores.append(article.score)
-            if compare_dates(article_date, current_time, 1):
-                yesterday_visited_scores.append(article.score)
-            if compare_dates(article_date, current_time, 7, False):
-                week_visited_scores.append(article.score)
-            if compare_dates(article_date, current_time, 30, False):
-                month_visited_scores.append(article.score)
-            if compare_dates(article_date, current_time, 365, False):
-                year_visited_scores.append(article.score)
+    stats = get_stats(all_articles)
 
     context = {
-        'counts': get_db_counts(),
-        'theme': 'dark',
-
-        'today_total_visited': len(today_visited_scores),
-        'today_total_points': sum(today_visited_scores),
-        'yesterday_total_visited': len(yesterday_visited_scores),
-        'yesterday_total_points': sum(yesterday_visited_scores),
-        'week_total_visited': len(week_visited_scores),
-        'week_total_points': sum(week_visited_scores),
-        'month_total_visited': len(month_visited_scores),
-        'month_total_points': sum(month_visited_scores),
-        'year_total_visited': len(year_visited_scores),
-        'year_total_points': sum(year_visited_scores),
+    'counts': get_db_counts(),
+    'theme': 'dark'
     }
 
+    context.update(stats)
     return render_template('stats.html', **context)
 
 @app.route('/favorites', methods=["GET"])
