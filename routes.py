@@ -6,14 +6,8 @@ from flask import (
 )
 
 from functions import (
-    get_top_stories,
-    get_new_stories,
-    get_best_stories,
     get_db_counts,
-    get_article,
-    article_parser,
     get_current_time,
-    compare_dates,
     get_story_from_db,
     get_stories,
     get_stats
