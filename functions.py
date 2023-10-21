@@ -26,7 +26,6 @@ def compare_dates(date_1, date_2, days=0, focus=True):
         return date_1 == past_date
     return date_1 >= past_date
 
-
 def get_req(url, timeout=5):
     while True:
         try: return requests.get(url, timeout=timeout)
@@ -50,7 +49,7 @@ def get_best_stories():
     return r.json()
 
 def get_article(article_id):
-    url = 'https://hacker-news.firebaseio.com/v0/item/' + str(article_id) + '.json'
+    url = f'https://hacker-news.firebaseio.com/v0/item/{article_id}.json'
     r = get_req(url)
     return r.json()
 
@@ -110,7 +109,6 @@ def get_stats(articles):
     }
 
     return context
-# -- URL --
 
 def delete_db_blank_urls():
     from models import Url
@@ -138,19 +136,27 @@ def get_story_from_db(article_id):
     else:
         return article
 
+def get_story_ids():
+    # get article ids from api
+    article_ids = get_top_stories() + get_best_stories() + get_new_stories()
+    print(len(article_ids), 'article ids found')
+
+    # remove duplicates
+    article_ids = list(set(article_ids))
+    print(len(article_ids), 'unique article ids found')
+
+    return article_ids
+
 def get_stories(article_limit=None, score_limit=None):
     from models import Url
-    articleIds = get_top_stories() + get_best_stories() + get_new_stories()
-    print(len(articleIds), 'article ids found')
-    articleIds = list(set(articleIds))
-    print(len(articleIds), 'unique article ids found')
+    article_ids = get_story_ids()
     articles = []
     already_visited_count = 0
     already_in_db_count = 0
     added_to_db_count = 0
     no_url_count = 0
 
-    for current_article_id in tqdm(articleIds, desc='Getting stories'):
+    for current_article_id in tqdm(article_ids, desc='Getting stories'):
         # get article from database
         article = get_story_from_db(current_article_id)
 
