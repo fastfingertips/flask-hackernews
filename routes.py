@@ -8,6 +8,7 @@ from flask import (
 from functions import (
     get_db_counts,
     get_current_time,
+    get_paginated_results,
     get_story_from_db,
     get_stories,
     get_stats
@@ -20,21 +21,8 @@ from models import Url
 @app.route('/', methods=['GET', 'POST'])
 def index():
     articles = get_stories(30)
+    articles = sorted(articles, key=lambda x: x.score, reverse=True)
 
-    articles_sorted = sorted(articles, key=lambda x: x.score, reverse=True)
-    context = {
-        'counts': get_db_counts(),
-        'articles': articles_sorted,
-        'theme': 'dark',
-    }
-
-    return render_template('index.html', **context)
-
-@app.route('/visited', methods=["GET"])
-def visited():
-    articles = Url.query.filter_by(visited=True).all()
-    articles = articles[::-1] # reverse order
-    print(len(articles), 'visited articles found in database')
     context = {
         'counts': get_db_counts(),
         'articles': articles,
@@ -43,17 +31,58 @@ def visited():
 
     return render_template('index.html', **context)
 
-@app.route('/notvisited', methods=["GET"])
-def notvisited():
-    articles = Url.query.filter_by(visited=False).all()
-    articles = sorted(articles, key=lambda x: x.score, reverse=True)
-    articles_top = articles[:30]
-    print(len(articles), 'not visited articles found in database')
+@app.route('/visited', methods=["GET"])
+def visited():
+    articles, pagination = get_paginated_results(
+        Url.query.filter_by(visited=True).order_by(Url.visit_date.desc()),
+        request.args.get('page', 1, type=int)
+    )
+
+    print(f'{len(articles)} visited articles found in database')
+
     context = {
         'counts': get_db_counts(),
-        'articles': articles_top,
+        'articles': articles,
         'theme': 'dark',
+        'pagination': pagination
     }
+
+    return render_template('index.html', **context)
+
+@app.route('/notvisited', methods=["GET"])
+def notvisited():
+    articles, pagination = get_paginated_results(
+        Url.query.filter_by(visited=False).order_by(Url.score.desc()),
+        request.args.get('page', 1, type=int)
+    )
+
+    print(f'{len(articles)} not visited articles found in database')
+
+    context = {
+        'counts': get_db_counts(),
+        'articles': articles,
+        'theme': 'dark',
+        'pagination': pagination
+    }
+
+    return render_template('index.html', **context)
+
+@app.route('/favorites', methods=["GET"])
+def favorites():
+    articles, pagination = get_paginated_results(
+        Url.query.filter_by(favorite=True).order_by(Url.visit_date.desc()),
+        request.args.get('page', 1, type=int)
+    )
+
+    print(len(articles), 'favorite articles found in database')
+
+    context = {
+        'counts': get_db_counts(),
+        'articles': articles,
+        'theme': 'dark',
+        'pagination': pagination,
+    }
+
     return render_template('index.html', **context)
 
 @app.route('/stats', methods=["GET"])
@@ -68,18 +97,6 @@ def stats():
 
     context.update(stats)
     return render_template('stats.html', **context)
-
-@app.route('/favorites', methods=["GET"])
-def favorites():
-    articles = Url.query.filter_by(favorite=True).all()
-    articles = articles[::-1] # reverse order for latest first
-    print(len(articles), 'favorite articles found in database')
-    context = {
-        'counts': get_db_counts(),
-        'articles': articles,
-        'theme': 'dark',
-    }
-    return render_template('favorites.html', **context)
 
 # -- INIT ROUTES --
 
