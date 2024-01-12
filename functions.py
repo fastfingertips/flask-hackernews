@@ -3,6 +3,23 @@ import requests, time
 from datetime import datetime, timedelta
 from tqdm import tqdm
 
+def get_paginated_results(query, page:int, per_page:int=30) -> tuple:
+    offset = (page - 1) * per_page
+    """
+    offset: The number of rows to skip, starting from the first row.
+    limit: The maximum number of rows to be returned, starting from the offset row.
+    all: Return the results as a list.
+    https://docs.sqlalchemy.org/en/14/orm/query.html#sqlalchemy.orm.Query.offset
+    https://docs.sqlalchemy.org/en/14/orm/query.html#sqlalchemy.orm.Query.limit
+    https://docs.sqlalchemy.org/en/14/orm/query.html#sqlalchemy.orm.Query.all
+
+    https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/api/#module-flask_sqlalchemy.pagination
+    https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/api/#flask_sqlalchemy.SQLAlchemy.paginate
+    """
+    results = query.offset(offset).limit(per_page).all()
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+    return results, pagination
+
 def get_current_time():
     return datetime.now()
 
@@ -136,9 +153,16 @@ def get_story_from_db(article_id):
     else:
         return article
 
-def get_story_ids():
+def get_story_ids(offset=None, limit=None):
     # get article ids from api
     article_ids = get_top_stories() + get_best_stories() + get_new_stories()
+
+    if offset is not None:
+        article_ids = article_ids[offset:]
+    
+    if limit is not None:
+        article_ids = article_ids[:limit]
+
     print(len(article_ids), 'article ids found')
 
     # remove duplicates
@@ -147,10 +171,12 @@ def get_story_ids():
 
     return article_ids
 
-def get_stories(article_limit=None, score_limit=None):
+def get_stories(article_limit=None, offset=None, score_limit=None):
+
     from models import Url
-    article_ids = get_story_ids()
+    article_ids = get_story_ids(offset=offset, limit=None)
     articles = []
+
     already_visited_count = 0
     already_in_db_count = 0
     added_to_db_count = 0
