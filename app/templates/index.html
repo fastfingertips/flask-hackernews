@@ -24,7 +24,11 @@
           <tr>
             <th scope="row">{{ article.id }}</th>
             <td>{{ article.article_id }}</td>
-            <td>{{ article.by }}</td>
+            <td>
+              <a href="https://news.ycombinator.com/user?id={{ article.by }}" class="text-decoration-none" target="_blank">
+                {{ article.by}}
+              </a>
+            </td>
             <td>{{ article.score }}</td>
             <td>{{ article.time }}</td>
             <td>{{ article.title }}</td>
