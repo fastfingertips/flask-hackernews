@@ -1,5 +1,5 @@
-from functions import get_current_time
-from database import db
+from modules.functions import get_current_time
+from cursors import db
 
 class Url(db.Model):
     id = db.Column(db.Integer, primary_key=True)

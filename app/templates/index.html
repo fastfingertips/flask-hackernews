@@ -1,7 +1,5 @@
 {% extends 'layout.html' %}
-
 {% block container %}
-
   {% if articles %}
     <!-- TABLE -->
     <table class="table table-hover table-striped p-4">
@@ -31,7 +29,7 @@
             <td>{{ article.time }}</td>
             <td>{{ article.title }}</td>
             <td>
-              {% if request.path == '/favorites' %}
+              {% if (request.path == '/favorites' or request.path == '/visited') %}
               <a href="{{ article.url }}" class="text-decoration-none" target="_blank">
               {% else %}
               <a href="/visit?id={{ article.article_id }}" class="text-decoration-none" target="_blank" onclick="deleteThisRow(this);">
@@ -112,5 +110,4 @@
       Any article not found!
     </div>
   {% endif %}
-
 {% endblock %}
