@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="{{ theme }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HN</title>
+    <link rel="ico" href="{{ url_for('static', filename='images/favicon.svg') }}">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/x.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+      
+  </head>
+  <body>	
+    <div class="min-vh-100 d-flex flex-column justify-content-between m-4 mb-0 p-4">
+      {% include 'includes/navbar.html' %}
+      <hr>
+      {% block container %}{% endblock %}
+      {% include 'includes/footer.html' %}
+    </div>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/table_operations.js') }}"></script>
+  </body>
+</html>
