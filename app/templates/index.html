@@ -23,7 +23,10 @@
         {% for article in articles %}
           <tr>
             <th scope="row">{{ article.id }}</th>
-            <td>{{ article.article_id }}</td>
+            <td>
+              <a href="https://news.ycombinator.com/item?id={{ article.article_id }}" class="text-decoration-none" target="_blank">
+                {{ article.article_id }}
+              </a>
             <td>
               <a href="https://news.ycombinator.com/user?id={{ article.by }}" class="text-decoration-none" target="_blank">
                 {{ article.by}}
