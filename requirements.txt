@@ -1,4 +1,4 @@
-flask
-flask_sqlalchemy
-requests
-tqdm
+flask==3.0.0
+flask_sqlalchemy==3.1.1
+requests==2.31.0
+tqdm==4.66.1
