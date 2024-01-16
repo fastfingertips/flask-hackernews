@@ -4,26 +4,55 @@ rem Set the paths for the main Python file and requirements file
 set MAIN_FILE_PATH=app/main.py
 set REQS_FILE_PATH=requirements.txt
 
-rem Set the default Python interpreter if not defined
-if not defined PYTHON set PYTHON=python
-
 rem Check if the main Python file exists
 if not exist %MAIN_FILE_PATH% goto :err_main_file_missing
 
 rem Check if the requirements file exists
 if not exist %REQS_FILE_PATH% goto :err_reqs_file_missing
 
+:check_venv
+rem Check if virtualenv is installed
+where virtualenv >nul 2>nul
+if %errorlevel% neq 0 (
+  echo Installing virtualenv...
+  pip install virtualenv
+  if %errorlevel% neq 0 (
+    echo Failed: Installing virtualenv. Exiting.
+    exit /b %errorlevel%
+  )
+)
+echo Checked: environment builder.
+
+rem Check if venv folder exists
+if not exist venv (
+  echo Creating virtual environment folder...
+  virtualenv venv
+  if %errorlevel% neq 0 (
+    echo Failed: Creating virtual environment folder. Exiting.
+    exit /b %errorlevel%
+  )
+)
+echo Checked: environment folder.
+
+:activate_venv
+call venv\Scripts\activate
+if errorlevel 1 (
+  echo Failed to activate virtual environment. Exiting.
+  exit /b %errorlevel%
+)
+echo Checked: virtual environment.
+
 :launch_pip
 rem Install Python dependencies using pip
 title Launching pip
-pip install -r %REQS_FILE_PATH%
+pip install -r %REQS_FILE_PATH% >nul 2>nul &rem --force
 if not %ERRORLEVEL% == 0 goto :err_pip_install
 goto :launch_python
 
 :launch_python
 rem Launch the Flask application using the specified Python interpreter
 title Launching python
-%PYTHON% %MAIN_FILE_PATH% %*
+python %MAIN_FILE_PATH% %*
 if not %ERRORLEVEL% == 0 goto :err_launch_python
 
 rem If everything is successful, exit gracefully
