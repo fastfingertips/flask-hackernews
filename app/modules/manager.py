@@ -8,7 +8,7 @@ from modules.models import Url
 from tqdm import tqdm
 from cursors import db
 
-def get_stories(article_limit=None, offset=None, score_limit=None):
+def get_stories(article_limit:int=30, score_limit:int=0, offset=None):
     article_ids = get_story_ids(offset=offset, limit=None)
     articles = []
 
@@ -64,17 +64,15 @@ def get_stories(article_limit=None, offset=None, score_limit=None):
                 already_visited_count += 1
                 continue
 
-        if score_limit is not None:
-            if article.score < score_limit:
-                # print(current_article_id, 'score too low, skipping')
-                continue
+        if article.score < score_limit:
+            # print(current_article_id, 'score too low, skipping')
+            continue
 
         articles.append(article)
 
-        if article_limit is not None:
-            if len(articles) >= article_limit:
-                # if article limit reached, stop adding articles
-                break
+        if len(articles) >= article_limit:
+            # if article limit reached, stop adding articles
+            break
 
     data = {
         'already_in_db_count': already_in_db_count,

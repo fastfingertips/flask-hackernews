@@ -3,12 +3,17 @@ from modules.manager import (
   get_stories
 )
 
-from flask import render_template
+from flask import render_template, request
 from cursors import app
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    articles = get_stories(30)
+
+    articles = get_stories(
+        request.args.get('limit', 30, type=int),
+        request.args.get('min', 0, type=int)
+        )
+
     articles = sorted(articles, key=lambda x: x.score, reverse=True)
 
     context = {
