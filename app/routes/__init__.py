@@ -6,5 +6,6 @@ from routes import (
     notvisited,
     stats,
     visit,
-    visited
+    visited,
+    search
 )
