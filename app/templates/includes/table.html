@@ -30,14 +30,14 @@
         </td>
         <td>{{ article.score }}</td>
         <td>{{ article.time }}</td>
-        <td>{{ article.title }}</td>
+        <td>{{ article.title|truncate(90) }}</td>
         <td>
           {% if (request.path == '/favorites' or request.path == '/visited') %}
-          <a href="{{ article.url }}" class="text-decoration-none" target="_blank">
+          <a href="{{ article.url }}" class="text-decoration-none" target="_blank" title="{{ article.url }}">
           {% else %}
-          <a href="/visit?id={{ article.article_id }}" class="text-decoration-none" target="_blank" onclick="deleteThisRow(this);">
+          <a href="/visit?id={{ article.article_id }}" class="text-decoration-none" target="_blank" title="{{ article.url }}" onclick="deleteThisRow(this);">
           {% endif %}
-            {{ article.url }}
+            {{ article.url|truncate(40) }}
           </a>
         </td>
         <td>{{ article.added_date.strftime('%Y/%m/%d, %H:%M:%S') }}</td>
