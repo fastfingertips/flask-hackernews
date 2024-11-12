@@ -1,6 +1,6 @@
 from flask import render_template
 from modules.manager import get_db_counts
-from modules.functions import get_stats
+from modules.stats import get_stats
 from modules.models import Url
 from cursors import app
 

@@ -1,4 +1,4 @@
-from modules.functions import get_current_time
+from utils.date_utils import get_current_time
 from cursors import db
 
 class Url(db.Model):
