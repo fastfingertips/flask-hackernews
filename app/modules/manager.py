@@ -1,12 +1,11 @@
-from modules.functions import (
+from tqdm import tqdm
+from modules.functions import get_story_ids
+from modules.models import Url
+from cursors import db
+from api.functions import (
   article_parser,
-  get_story_ids,
   get_article
 )
-
-from modules.models import Url
-from tqdm import tqdm
-from cursors import db
 
 def get_stories(article_limit:int=30, score_limit:int=0, offset=None):
     article_ids = get_story_ids(offset=offset, limit=None)

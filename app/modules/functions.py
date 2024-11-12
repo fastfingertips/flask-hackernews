@@ -1,12 +1,16 @@
-from datetime import (
-  datetime,
-  timedelta
+from api.functions import (
+  get_show_stories,
+  get_top_stories,
+  get_new_stories,
+  get_best_stories
 )
 
-import requests
-import time
+from utils.date_utils import (
+  get_current_time,
+  compare_dates
+)
 
-def get_paginated_results(query, page:int, per_page:int=30) -> tuple:
+def get_paginated_results(query, page:int, per_page:int=15) -> tuple:
     offset = (page - 1) * per_page
     """
     offset: The number of rows to skip, starting from the first row.
@@ -22,76 +26,6 @@ def get_paginated_results(query, page:int, per_page:int=30) -> tuple:
     results = query.offset(offset).limit(per_page).all()
     pagination = query.paginate(page=page, per_page=per_page, error_out=False)
     return results, pagination
-
-def get_current_time():
-    return datetime.now()
-
-def compare_dates(date_1, date_2, days=0, focus=True):
-    """
-    Compare two dates and determine if they are equal or one is greater than the other.
-
-    Args:
-    - date_1 (datetime): The first date to compare.
-    - date_2 (datetime): The second date to compare.
-    - days (int): Number of days to subtract from date_2 for comparison.
-                   Defaults to 0.
-    - focus (bool): If True, check for equality; if False, check for greater than or equal.
-                    Defaults to True.
-
-    Returns:
-    - bool: True if the condition is met, otherwise False.
-    """
-    past_date = date_2 - timedelta(days=days)
-    if focus:
-        return date_1 == past_date
-    return date_1 >= past_date
-
-def get_req(url, timeout=5):
-    while True:
-        try: return requests.get(url, timeout=timeout)
-        except requests.ConnectionError: # check internet connection
-            print("No internet connection available.", end='\r')
-            time.sleep(1)
-
-def get_top_stories():
-    url = 'https://hacker-news.firebaseio.com/v0/topstories.json'
-    r = get_req(url)
-    return r.json()
-
-def get_new_stories():
-    url = 'https://hacker-news.firebaseio.com/v0/newstories.json'
-    r = get_req(url)
-    return r.json()
-
-def get_best_stories():
-    url = 'https://hacker-news.firebaseio.com/v0/beststories.json'
-    r = get_req(url)
-    return r.json()
-
-def get_article(article_id):
-    url = f'https://hacker-news.firebaseio.com/v0/item/{article_id}.json'
-    r = get_req(url)
-    return r.json()
-
-def article_parser(article_json):
-    data = {
-        'id': None,
-        'by': None,
-        'descendants': 0, # sometimes article has no comments
-        'kids': [],
-        'score': None,
-        'time': None,
-        'title': None,
-        'type': None,
-        'url': ''
-    }
-
-    for getKey, exceptValue in data.items():
-        try: data[getKey] = article_json[getKey]
-        except KeyError: 
-            if exceptValue is not None: data[getKey] = exceptValue
-            else: print(f'{getKey} not found')
-    return data
 
 def get_stats(articles):
     today_visited_scores = []
@@ -132,7 +66,7 @@ def get_stats(articles):
 
 def get_story_ids(offset=None, limit=None):
     # get article ids from api
-    article_ids = get_top_stories() + get_best_stories() + get_new_stories()
+    article_ids = get_show_stories() + get_top_stories() + get_best_stories() + get_new_stories()
 
     if offset is not None:
         article_ids = article_ids[offset:]
@@ -147,4 +81,3 @@ def get_story_ids(offset=None, limit=None):
     print(len(article_ids), 'unique article ids found')
 
     return article_ids
-
