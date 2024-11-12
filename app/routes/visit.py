@@ -9,7 +9,7 @@ from cursors import (
   db
 )
 
-from modules.functions import get_current_time
+from utils.date_utils import get_current_time
 from modules.manager import get_story_from_db
 
 @app.route('/visit', methods=["GET"])
